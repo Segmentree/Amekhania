@@ -4,7 +4,11 @@
       bordered
       class="q-pa-md rounded-borders shadow-0 full-width full-height"
     >
-      <q-scroll-area class="messages-box">
+      <q-scroll-area
+        ref="scrollAreaRef"
+        class="messages-box"
+        @scroll="onScrollChange"
+      >
         <q-card
           bordered
           flat
@@ -30,22 +34,34 @@
   </div>
 </template>
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useChatHub } from './chat-hub.hook';
 import { CoreMessage } from 'ai';
 
 interface ChatHubProps {
-  system: string;
-  model: string;
-  backgroundMessages: CoreMessage[];
+  system?: string;
+  model?: string;
+  backgroundMessages?: CoreMessage[];
 }
 
 const props = defineProps<ChatHubProps>();
+const scrollAreaRef = ref();
+const scrollAreaSize = ref(0);
 
 const { conversation, userQuestion, askQuestion } = useChatHub(
   props.system,
   props.model,
   props.backgroundMessages
 );
+
+function onScrollChange() {
+  if (scrollAreaRef.value.getScroll().verticalSize === scrollAreaSize.value)
+    return;
+
+  const vertical = scrollAreaRef.value.getScroll().verticalSize;
+  scrollAreaRef.value.setScrollPosition('vertical', vertical);
+  scrollAreaSize.value = vertical;
+}
 </script>
 
 <style lang="scss">
