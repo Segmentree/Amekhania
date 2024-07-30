@@ -27,7 +27,7 @@
           dense
           outlined
           v-model="userQuestion"
-          @keypress.enter="askQuestion"
+          @keypress.enter="askQuestion()"
         />
       </div>
     </q-page-sticky>
