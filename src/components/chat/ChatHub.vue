@@ -26,8 +26,8 @@
           class="full-width bg-white"
           dense
           outlined
-          v-model="userQuestion"
-          @keypress.enter="askQuestion()"
+          v-model="inputValue"
+          @keypress.enter="onSend"
         />
       </div>
     </q-page-sticky>
@@ -37,22 +37,31 @@
 import { ref } from 'vue';
 import { useChatHub } from './chat-hub.hook';
 import { CoreMessage } from 'ai';
+import { Tool } from '../../models/tool';
 
 interface ChatHubProps {
   system?: string;
   model?: string;
   backgroundMessages?: CoreMessage[];
+  tools?: Tool[];
 }
 
 const props = defineProps<ChatHubProps>();
 const scrollAreaRef = ref();
 const scrollAreaSize = ref(0);
+const inputValue = ref('');
 
-const { conversation, userQuestion, askQuestion } = useChatHub(
+const { conversation, askQuestion } = useChatHub(
   props.system,
   props.model,
-  props.backgroundMessages
+  props.backgroundMessages,
+  props.tools
 );
+
+function onSend() {
+  askQuestion(inputValue.value);
+  inputValue.value = '';
+}
 
 function onScrollChange() {
   if (scrollAreaRef.value.getScroll().verticalSize === scrollAreaSize.value)
