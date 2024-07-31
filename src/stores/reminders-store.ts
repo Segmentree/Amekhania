@@ -24,6 +24,12 @@ export const useRemindersStore = defineStore('reminders', {
   }),
   getters: {
     list: (state) => Object.values(state.reminders),
+    listWithKeys: (state) =>
+      Object.entries(state.reminders).map(([key, value]) => ({
+        key,
+        summary: value.summary,
+        date: value.date,
+      })),
     entry: (state) => (key: string) => state.reminders[key],
     byDate: (state) => (date: string) =>
       Object.values(state.reminders).filter(
@@ -35,7 +41,7 @@ export const useRemindersStore = defineStore('reminders', {
       ),
   },
   actions: {
-    add(reminder: { summary: string; date: string }) {
+    add(reminder: Reminder) {
       const key = createHash(`${reminder.summary}-${reminder.date}`);
       this.reminders[key] = reminder;
       setReminders(this.reminders);

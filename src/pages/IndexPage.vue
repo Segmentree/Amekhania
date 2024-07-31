@@ -1,12 +1,11 @@
 <template>
-  <q-page class="row q-pa-md">
-    <chat-hub />
-  </q-page>
+  <chat-hub :tools="tools" />
 </template>
 
 <script setup>
 import ChatHub from 'src/components/chat/ChatHub.vue';
-defineOptions({
-  name: 'IndexPage',
-});
+import { useRemindersTools } from '../tools/chat-functions';
+
+const { setReminder, listReminders, askReminderDate } = useRemindersTools();
+const tools = [setReminder, listReminders, askReminderDate];
 </script>

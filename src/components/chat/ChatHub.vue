@@ -2,7 +2,7 @@
   <div class="chat-container">
     <q-card
       bordered
-      class="q-pa-md rounded-borders shadow-0 full-width full-height"
+      class="rounded-borders shadow-0 full-width full-height q-pa-md"
     >
       <q-scroll-area
         ref="scrollAreaRef"
@@ -20,39 +20,44 @@
         </q-card>
       </q-scroll-area>
     </q-card>
-    <q-page-sticky expand position="bottom">
-      <div class="q-pa-md full-width">
-        <q-input
-          class="full-width bg-white"
-          dense
-          outlined
-          v-model="userQuestion"
-          @keypress.enter="askQuestion"
-        />
-      </div>
-    </q-page-sticky>
+    <q-input
+      class="bg-white q-mt-md"
+      dense
+      outlined
+      v-model="inputValue"
+      @keypress.enter="onSend"
+    />
   </div>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useChatHub } from './chat-hub.hook';
 import { CoreMessage } from 'ai';
+import { Tool } from '../../models/tool';
 
 interface ChatHubProps {
   system?: string;
   model?: string;
   backgroundMessages?: CoreMessage[];
+  tools?: Tool[];
 }
 
 const props = defineProps<ChatHubProps>();
 const scrollAreaRef = ref();
 const scrollAreaSize = ref(0);
+const inputValue = ref('');
 
-const { conversation, userQuestion, askQuestion } = useChatHub(
+const { conversation, askQuestion } = useChatHub(
   props.system,
   props.model,
-  props.backgroundMessages
+  props.backgroundMessages,
+  props.tools
 );
+
+function onSend() {
+  askQuestion(inputValue.value);
+  inputValue.value = '';
+}
 
 function onScrollChange() {
   if (scrollAreaRef.value.getScroll().verticalSize === scrollAreaSize.value)

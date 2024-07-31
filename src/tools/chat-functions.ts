@@ -1,4 +1,3 @@
-import { Ref } from 'vue';
 import { z } from 'zod';
 import { Tool } from '../models/tool';
 import { Reminder } from '../models/reminder';
@@ -9,39 +8,45 @@ export function useRemindersTools() {
   const remindersStore = useRemindersStore();
 
   const setReminder: Tool = {
+    name: 'setReminder',
     description:
-      'Whenever the user mentions the needs of a reminder or something related to record a date',
+      'The user mentions the needs of a reminder or something related to record a date. If the date can`t be inferred, ask for it.',
     parameters: z.object({
       summary: z.string().describe('What the user needs to be reminded of'),
       date: z
         .string()
         .describe('The date to remind the user in the format YYYY-MM-DD'),
     }),
-    execute: (
-      request: () => void,
-      promptReference: Ref<string>,
-      { summary, date }
-    ) => {
-      promptReference.value = `Tell the user about the reminder: ${summary} on ${date} was set. Don't call setReminder tool this time.`;
+    execute: ({ summary, date }) => {
       remindersStore.add({ summary, date });
-      request();
+      return `Notify the user the reminder for ${summary} was created on ${date}. Don't say more than that.`;
+    },
+  };
+
+  const askReminderDate: Tool = {
+    name: 'askReminderDate',
+    description: 'Ask the user for the date of the reminder.',
+    parameters: z.object({}),
+    execute: () => {
+      return 'Ask the user for the date of the reminder. If the given date can be inferred, set the reminder.';
     },
   };
 
   const listReminders: Tool = {
-    description: 'List all the reminders that the user has set',
+    name: 'listReminders',
+    description:
+      'You are asked to list all the reminders that the user has set',
     parameters: z.object({}),
-    execute: (request: () => void, promptReference: Ref<string>) => {
+    execute: () => {
       const list = proxyUnwrap(remindersStore.list)
         .map(
           (reminder: Reminder) =>
             `{ 'summary':${reminder.summary}, 'date':${reminder.date}}`
         )
         .join(', ');
-      promptReference.value = `Tell the user about his list of reminders ${list}. Don't call listReminder tool this time.`;
-      request();
+      return `Show the user this list of reminders: ${list}`;
     },
   };
 
-  return { setReminder, listReminders };
+  return { setReminder, listReminders, askReminderDate };
 }
