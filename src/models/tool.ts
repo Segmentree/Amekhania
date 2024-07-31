@@ -11,5 +11,6 @@ type inferParameters<PARAMETERS extends Parameters> =
 export interface Tool {
   description: string;
   parameters: Parameters;
-  execute: (args: inferParameters<Parameters>) => void;
+  execute?: (args: inferParameters<Parameters>) => void;
+  name: string;
 }
