@@ -47,8 +47,7 @@ export function useChatHub(
 
     const hasNext = await result.textStream[Symbol.asyncIterator]().next();
     if (hasNext.value) {
-      conversation.value.push('');
-      const lastIdx = conversation.value.length - 1;
+      const lastIdx = conversation.value.push('') - 1;
       for await (const chunk of result.textStream) {
         conversation.value[lastIdx] += chunk;
       }
