@@ -1,7 +1,5 @@
 <template>
-  <q-page class="row q-pa-md">
-    <chat-hub :tools="tools" />
-  </q-page>
+  <chat-hub :tools="tools" />
 </template>
 
 <script setup>
