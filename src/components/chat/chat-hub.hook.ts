@@ -1,46 +1,44 @@
 import { ref, Ref } from 'vue';
 import { openai } from '@ai-sdk/openai';
-import { streamText, CoreMessage, tool } from 'ai';
-import { useRemindersTools } from '../../tools/chat-functions';
+import { streamText, CoreMessage, tool as toTool } from 'ai';
+import { Tool } from '../../models/tool';
 
 type ToolState = 'auto' | 'none' | 'required';
 
 export function useChatHub(
   system = '',
   model = 'gpt-4-turbo',
-  backgroundMessages: CoreMessage[] = []
+  backgroundMessages: CoreMessage[] = [],
+  tools: Tool[] = []
 ) {
-  const userQuestion = ref('');
   const messages = backgroundMessages;
   const conversation: Ref<string[]> = ref([]);
 
-  const { setReminder, listReminders } = useRemindersTools();
+  const toolsToUse = tools.reduce((acc, tool) => {
+    acc[`${tool.name}`] = toTool({
+      description: tool.description,
+      parameters: tool.parameters,
+      execute: async (args) => tool.execute && tool.execute(args),
+    });
+    return acc;
+  }, {} as { [key: string]: any });
 
-  async function askQuestion(toolChoice: ToolState = 'auto') {
-    messages.push({ role: 'user', content: userQuestion.value });
+  async function askQuestion(
+    userQuestion: string,
+    toolChoice: ToolState = 'auto'
+  ) {
+    messages.push({ role: 'user', content: userQuestion });
     const result = await streamText({
       model: openai(model),
       system: system,
       messages,
-      tools: {
-        setReminder: tool({
-          description: setReminder.description,
-          parameters: setReminder.parameters,
-          execute: async (args) => setReminder.execute(args),
-        }),
-        listReminders: tool({
-          description: listReminders.description,
-          parameters: listReminders.parameters,
-          execute: async (args) => listReminders.execute(args),
-        }),
-      },
+      tools: toolsToUse,
       async onFinish({ text, toolCalls, toolResults, finishReason, usage }) {
         console.log({ text, toolCalls, toolResults, finishReason, usage });
         if (toolResults)
           for (const { result } of toolResults) {
-            if (result != undefined) {
-              userQuestion.value = result;
-              await askQuestion('none');
+            if (result) {
+              await askQuestion(result, 'none');
             }
           }
       },
@@ -59,9 +57,7 @@ export function useChatHub(
     result.text.then((text) => {
       if (text) messages.push({ role: 'assistant', content: text });
     });
-
-    userQuestion.value = '';
   }
 
-  return { conversation, userQuestion, askQuestion };
+  return { conversation, askQuestion };
 }
