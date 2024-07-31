@@ -8,8 +8,9 @@ export function useRemindersTools() {
   const remindersStore = useRemindersStore();
 
   const setReminder: Tool = {
+    name: 'setReminder',
     description:
-      'The user mentions the needs of a reminder or something related to record a date.',
+      'The user mentions the needs of a reminder or something related to record a date. If the date can`t be inferred, ask for it.',
     parameters: z.object({
       summary: z.string().describe('What the user needs to be reminded of'),
       date: z
@@ -22,7 +23,17 @@ export function useRemindersTools() {
     },
   };
 
+  const askReminderDate: Tool = {
+    name: 'askReminderDate',
+    description: 'Ask the user for the date of the reminder.',
+    parameters: z.object({}),
+    execute: () => {
+      return 'Ask the user for the date of the reminder. If the given date can be inferred, set the reminder.';
+    },
+  };
+
   const listReminders: Tool = {
+    name: 'listReminders',
     description:
       'You are asked to list all the reminders that the user has set',
     parameters: z.object({}),
@@ -37,5 +48,5 @@ export function useRemindersTools() {
     },
   };
 
-  return { setReminder, listReminders };
+  return { setReminder, listReminders, askReminderDate };
 }
