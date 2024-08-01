@@ -1,5 +1,9 @@
 <template>
-  <q-dialog :modelValue="state" @update:modelValue="$emit('change', $event)">
+  <q-dialog
+    :modelValue="state"
+    @update:modelValue="$emit('change', $event)"
+    @keypress.enter="onSave"
+  >
     <q-card style="width: 400px">
       <q-card-section class="row justify-end">
         <q-btn size="sm" icon="close" flat round dense v-close-popup />
@@ -17,14 +21,14 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { Reminder } from '../../models/reminder';
 
 interface ReminderFormDialogProps {
   state: boolean;
 }
 
-const props = defineProps<ReminderFormDialogProps>();
+defineProps<ReminderFormDialogProps>();
 const emit = defineEmits(['close', 'save', 'change']);
 
 const reminder = defineModel<Reminder & { [key: string]: any }>();
@@ -39,11 +43,4 @@ function onSave() {
   };
   emit('save', reminder.value);
 }
-
-watch(reminder, (value) => {
-  if (!props.state) {
-    referenceDate.value = value?.date || '';
-    referenceSummary.value = value?.summary || '';
-  }
-});
 </script>
