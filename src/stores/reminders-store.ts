@@ -1,26 +1,15 @@
 import { defineStore } from 'pinia';
-import sha256 from 'crypto-js/sha256';
+import {
+  createHash,
+  getFromLocalStorage,
+  setToLocalStorage,
+} from '../tools/helpers';
 import { Reminder } from '../models/reminder';
-
-function getReminders() {
-  return (
-    localStorage.getItem('reminders') !== null
-      ? JSON.parse(localStorage.getItem('reminders')!)
-      : {}
-  ) as { [key: string]: Reminder };
-}
-
-function setReminders(reminders: { [key: string]: Reminder }) {
-  localStorage.setItem('reminders', JSON.stringify(reminders));
-}
-
-function createHash(key: string) {
-  return sha256(key).toString();
-}
+import { format } from '@formkit/tempo';
 
 export const useRemindersStore = defineStore('reminders', {
   state: () => ({
-    reminders: getReminders(),
+    reminders: getFromLocalStorage<Reminder>('reminders'),
   }),
   getters: {
     list: (state) => Object.values(state.reminders),
@@ -43,21 +32,24 @@ export const useRemindersStore = defineStore('reminders', {
   actions: {
     add(reminder: Reminder) {
       const key = createHash(`${reminder.summary}-${reminder.date}`);
-      this.reminders[key] = reminder;
-      setReminders(this.reminders);
+      this.reminders[key] = {
+        ...reminder,
+        date: format(reminder.date, 'full'),
+      };
+      setToLocalStorage('reminders', this.reminders);
     },
     remove(key: string) {
       delete this.reminders[key];
-      setReminders(this.reminders);
+      setToLocalStorage('reminders', this.reminders);
     },
     update(key: string, summary?: string, date?: string) {
       if (summary) {
         this.reminders[key].summary = summary;
       }
       if (date) {
-        this.reminders[key].date = date;
+        this.reminders[key].date = format(date, 'full');
       }
-      setReminders(this.reminders);
+      setToLocalStorage('reminders', this.reminders);
     },
   },
 });
