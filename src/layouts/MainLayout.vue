@@ -19,13 +19,12 @@
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-item> Logo </q-item>
-      <q-list>
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
+
+      <essential-link
+        v-for="link in linksList"
+        :key="link.title"
+        v-bind="link"
+      />
     </q-drawer>
 
     <q-page-container>

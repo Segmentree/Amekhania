@@ -4,8 +4,9 @@
 
 <script setup>
 import ChatHub from 'src/components/chat/ChatHub.vue';
-import { useRemindersTools } from '../tools/chat-functions';
+import { useRemindersTools, useNotesTools } from '../tools/chat-functions';
 
 const { setReminder, listReminders, askReminderDate } = useRemindersTools();
-const tools = [setReminder, listReminders, askReminderDate];
+const { addNote, listNotes } = useNotesTools();
+const tools = [setReminder, listReminders, askReminderDate, addNote, listNotes];
 </script>

@@ -9,10 +9,15 @@
         <q-btn size="sm" icon="close" flat round dense v-close-popup />
       </q-card-section>
       <q-card-section>
-        <q-input v-model="referenceDate" label="Date" type="date" outlined />
+        <q-input v-model="referenceTitle" label="Title" outlined />
       </q-card-section>
       <q-card-section>
-        <q-input v-model="referenceSummary" label="Summary" outlined />
+        <q-input
+          v-model="referenceSummary"
+          label="Summary"
+          type="textarea"
+          outlined
+        />
       </q-card-section>
       <q-card-actions align="right">
         <q-btn flat label="Save" color="primary" @click="onSave" />
@@ -22,25 +27,27 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Reminder } from '../../models/reminder';
+import { Note } from '../../models/note';
 
-interface ReminderFormDialogProps {
+interface NoteFormDialogProps {
   state: boolean;
 }
 
-defineProps<ReminderFormDialogProps>();
+defineProps<NoteFormDialogProps>();
 const emit = defineEmits(['close', 'save', 'change']);
 
-const reminder = defineModel<Reminder & { [key: string]: any }>();
-const referenceDate = ref(reminder.value?.date || '');
-const referenceSummary = ref(reminder.value?.summary || '');
+const note = defineModel<Note & { [key: string]: any }>();
+const referenceSummary = ref(note.value?.summary || '');
+const referenceTitle = ref(note.value?.title || '');
+const noteDate = ref(note.value?.date);
 
 function onSave() {
-  reminder.value = {
-    ...reminder.value,
-    date: referenceDate.value,
+  note.value = {
+    ...note.value,
+    date: noteDate.value || new Date().toDateString(),
     summary: referenceSummary.value,
+    title: referenceTitle.value,
   };
-  emit('save', reminder.value);
+  emit('save', note.value);
 }
 </script>
