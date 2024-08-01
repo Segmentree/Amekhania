@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="row q-gutter-xs">
+    <div class="row justify-center q-gutter-xs">
       <q-card
-        class="col-md-3 col-lg-2"
+        class="col-12 col-sm-5 col-md-3"
         flat
         bordered
         v-for="reminder in listWithKeys"
@@ -15,20 +15,24 @@
           {{ reminder.summary }}
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn
-            flat
-            round
-            color="orange"
-            icon="edit"
-            @click="onStartUpdate(reminder)"
-          />
-          <q-btn
-            flat
-            round
-            color="red"
-            icon="delete"
-            @click="remove(reminder.key)"
-          />
+          <div class="row justify-end absolute-bottom">
+            <q-btn
+              size="sm"
+              flat
+              round
+              color="orange"
+              icon="edit"
+              @click="onStartUpdate(reminder)"
+            />
+            <q-btn
+              size="sm"
+              flat
+              round
+              color="red"
+              icon="delete"
+              @click="remove(reminder.key)"
+            />
+          </div>
         </q-card-actions>
       </q-card>
     </div>
@@ -36,11 +40,13 @@
       <q-btn fab color="primary" icon="add" @click="creating = true" />
     </q-page-sticky>
     <reminder-form-dialog
+      v-if="creating"
       :state="creating"
       @save="onSave"
       @change="creating = $event"
     />
     <reminder-form-dialog
+      v-if="updating"
       :state="updating"
       v-model="reminderModel"
       @save="onUpdate"
