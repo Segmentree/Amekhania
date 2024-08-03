@@ -9,11 +9,14 @@ export function createHash(key: string) {
 }
 
 export function getFromLocalStorage<T>(key: string) {
-  return (
-    localStorage.getItem(key) !== null
-      ? JSON.parse(localStorage.getItem(key)!)
-      : {}
-  ) as { [key: string]: T };
+  try {
+    return (
+      localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key)!) : {}
+    ) as { [key: string]: T };
+  } catch (e) {
+    console.error(e);
+    return {} as { [key: string]: T };
+  }
 }
 
 export function setToLocalStorage<T>(key: string, value: { [key: string]: T }) {
