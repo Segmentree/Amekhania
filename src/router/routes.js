@@ -18,6 +18,11 @@ const routes = [
         name: 'NotesList',
         component: () => import('pages/NotesList.vue'),
       },
+      {
+        path: '/tools-lab',
+        name: 'ToolsLab',
+        component: () => import('pages/ToolsLab.vue'),
+      },
     ],
   },
 
