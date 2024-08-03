@@ -35,7 +35,7 @@ export default route(function (/* { store, ssrContext } */) {
 
   Router.beforeEach((to, from, next) => {
     if (to.path === '/' && to.name === undefined) next({ name: 'Home' });
-    next();
+    else next();
   });
 
   return Router;
