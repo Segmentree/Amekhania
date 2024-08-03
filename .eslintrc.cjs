@@ -89,5 +89,8 @@ module.exports = {
 
     // allow nully assertions
     '@typescript-eslint/no-non-null-assertion': 'off',
+
+    // allow ignore next line
+    '@typescript-eslint/ban-ts-comment': 'off',
   },
 };

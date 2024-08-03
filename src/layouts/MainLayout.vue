@@ -62,6 +62,12 @@ const linksList = [
     icon: 'edit_note',
     link: 'NotesList',
   },
+  {
+    title: 'Tools Lab',
+    caption: 'Create your own tools',
+    icon: 'science',
+    link: 'ToolsLab',
+  },
 ];
 
 const leftDrawerOpen = ref(false);
