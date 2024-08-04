@@ -1,7 +1,6 @@
 <template>
   <div class="chat-container">
     <q-card
-      bordered
       class="rounded-borders shadow-0 full-width full-height q-pa-md"
     >
       <q-scroll-area
@@ -9,24 +8,38 @@
         class="messages-box"
         @scroll="onScrollChange"
       >
-        <q-card
-          bordered
-          flat
-          class="bg-blue-5 q-pa-md q-mt-md text-white text-weight-bold"
-          v-for="(entrance, idx) in conversation"
+        <div
+          class="row full-width"
+          v-for="(entrance, idx) in messages"
           :key="`response-${idx}`"
+          :class="entrance.role == 'assistant' ? 'justify-end' : 'justify-start'"
         >
-          {{ entrance }}
-        </q-card>
+          <q-card
+            flat
+            class="q-pa-md q-mt-md chat-card"
+            :class="entrance.role == 'assistant' ? 'text-white bg-blue-10' : 'bg-blue-grey-1'"
+          >
+            <q-markdown
+              :no-highlight="false"
+              content-style="background-color: transparent"
+              :src="entrance.content"
+            />
+          </q-card>
+        </div>
       </q-scroll-area>
     </q-card>
-    <q-input
-      class="bg-white q-mt-md"
-      dense
-      outlined
-      v-model="inputValue"
-      @keypress.enter="onSend"
-    />
+    <div class="row justify-center">
+      <q-input
+        class="q-mt-md chat-card"
+        filled
+        v-model="inputValue"
+        @keypress.enter="onSend"
+      >
+        <template v-slot:append>
+          <q-btn round size="sm" @click="onSend" :disable="!inputValue" icon="keyboard_double_arrow_up" color="blue-10" />
+        </template>
+      </q-input>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -47,7 +60,7 @@ const scrollAreaRef = ref();
 const scrollAreaSize = ref(0);
 const inputValue = ref('');
 
-const { conversation, askQuestion } = useChatHub(
+const { messages, askQuestion } = useChatHub(
   props.system,
   props.model,
   props.backgroundMessages,
@@ -55,8 +68,10 @@ const { conversation, askQuestion } = useChatHub(
 );
 
 function onSend() {
-  askQuestion(inputValue.value);
-  inputValue.value = '';
+  if(inputValue.value) {
+    askQuestion(inputValue.value);
+    inputValue.value = '';
+  }
 }
 
 function onScrollChange() {
@@ -75,8 +90,28 @@ function onScrollChange() {
   height: 83vh;
 }
 
+.chat-card {
+  width: 90%;
+  padding-bottom: 0;
+  border-radius: 15px;
+}
+
 .messages-box {
   width: 100%;
   height: 100%;
 }
+
+pre {
+  color: white !important;
+  background: #212121 !important;
+}
+
+.q-markdown--line-numbers{
+  color: white !important;
+  background: #212121 !important;
+}
+.q-markdown--line-numbers-wrapper{
+  background: #212121 !important;
+}
+
 </style>

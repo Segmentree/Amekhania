@@ -1,4 +1,4 @@
-import { ref, Ref } from 'vue';
+import { ref } from 'vue';
 import { openai } from '@ai-sdk/openai';
 import { streamText, CoreMessage, tool as toTool } from 'ai';
 import { Tool } from '../../models/tool';
@@ -11,8 +11,7 @@ export function useChatHub(
   backgroundMessages: CoreMessage[] = [],
   tools: Tool[] = []
 ) {
-  const messages = backgroundMessages;
-  const conversation: Ref<string[]> = ref([]);
+  const messages = ref(backgroundMessages);
 
   const toolsToUse = tools.reduce((acc, tool) => {
     acc[`${tool.name}`] = toTool({
@@ -27,11 +26,11 @@ export function useChatHub(
     userQuestion: string,
     toolChoice: ToolState = 'auto'
   ) {
-    messages.push({ role: 'user', content: userQuestion });
+    messages.value.push({ role: 'user', content: userQuestion });
     const result = await streamText({
       model: openai(model),
       system: system,
-      messages,
+      messages: messages.value,
       tools: toolsToUse,
       async onFinish({ text, toolCalls, toolResults, finishReason, usage }) {
         console.log({ text, toolCalls, toolResults, finishReason, usage });
@@ -47,16 +46,12 @@ export function useChatHub(
 
     const hasNext = await result.textStream[Symbol.asyncIterator]().next();
     if (hasNext.value) {
-      const lastIdx = conversation.value.push('') - 1;
+      const lastIdx = messages.value.push({role: 'assistant', content: ''}) - 1;
       for await (const chunk of result.textStream) {
-        conversation.value[lastIdx] += chunk;
+        messages.value[lastIdx].content += chunk;
       }
     }
-
-    result.text.then((text) => {
-      if (text) messages.push({ role: 'assistant', content: text });
-    });
   }
 
-  return { conversation, askQuestion };
+  return { messages, askQuestion };
 }

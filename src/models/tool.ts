@@ -27,3 +27,8 @@ export interface CustomTool {
   body: string;
   name: string;
 }
+
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
