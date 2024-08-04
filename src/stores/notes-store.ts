@@ -40,7 +40,6 @@ export const useNotesStore = defineStore('notes', {
   },
   actions: {
     add(note: Note) {
-      console.log('note', note);
       const key = createHash(`${note.title}-${note.date}`);
       this.notes[key] = note;
       setToLocalStorage('notes', this.notes);
