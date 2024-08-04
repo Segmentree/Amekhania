@@ -24,9 +24,14 @@ export function useChatHub(
 
   async function askQuestion(
     userQuestion: string,
-    toolChoice: ToolState = 'auto'
+    toolChoice: ToolState = 'auto',
+    internal = false
   ) {
-    messages.value.push({ role: 'user', content: userQuestion });
+    messages.value.push({
+      role: 'user',
+      content: userQuestion,
+      internal: internal,
+    } as CoreMessage);
     const result = await streamText({
       model: openai(model),
       system: system,
@@ -37,7 +42,7 @@ export function useChatHub(
         if (toolResults)
           for (const { result } of toolResults) {
             if (result) {
-              await askQuestion(result, 'none');
+              await askQuestion(result, 'none', true);
             }
           }
       },
@@ -46,7 +51,8 @@ export function useChatHub(
 
     const hasNext = await result.textStream[Symbol.asyncIterator]().next();
     if (hasNext.value) {
-      const lastIdx = messages.value.push({role: 'assistant', content: ''}) - 1;
+      const lastIdx =
+        messages.value.push({ role: 'assistant', content: '' }) - 1;
       for await (const chunk of result.textStream) {
         messages.value[lastIdx].content += chunk;
       }
