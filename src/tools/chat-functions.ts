@@ -70,9 +70,14 @@ export function useNotesTools() {
           'A summary of the recent conversation or the goal of the note'
         ),
       date: z.string().describe('The current date in the format YYYY-MM-DD'),
+      tags: z
+        .array(z.string())
+        .describe(
+          'Generate three different tags based on the context of the note'
+        ),
     }),
-    execute: ({ title, summary, date }) => {
-      notesStore.add({ title, summary, date });
+    execute: ({ title, summary, date, tags }) => {
+      notesStore.add({ title, summary, date, tags });
       return `Notify the user that the note was created with the title ${title} and the summary ${summary}. Don't say more than that.`;
     },
   };
@@ -85,7 +90,7 @@ export function useNotesTools() {
       const list = proxyUnwrap(notesStore.list)
         .map(
           (note: Note) =>
-            `{ 'title':${note.title}, 'summary':${note.summary}, 'date':${note.date}}`
+            `{ 'title':${note.title}, 'summary':${note.summary}, 'date':${note.date}, 'tags':${note.tags}}`
         )
         .join(', ');
       return `Show the user this list of notes: ${list}`;

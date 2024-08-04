@@ -14,6 +14,18 @@
         <q-card-section class="text-h6">
           {{ note.date }}
         </q-card-section>
+        <q-card-section class="row q-gutter-xs">
+          <q-card
+            flat
+            v-for="(tag, i) in note.tags"
+            :key="`note-tag-${i}`"
+            class="q-px-sm bg-info text-white text-weight-bold"
+          >
+            <q-card-section class="q-pa-none">
+              {{ tag }}
+            </q-card-section>
+          </q-card>
+        </q-card-section>
         <q-card-section>
           {{ note.summary }}
         </q-card-section>
@@ -87,7 +99,8 @@ function onUpdate() {
     noteModel.value.key,
     noteModel.value.title,
     noteModel.value.summary,
-    noteModel.value.date
+    noteModel.value.date,
+    noteModel.value.tags
   );
   updating.value = false;
 }
