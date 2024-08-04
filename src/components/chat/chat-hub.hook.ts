@@ -5,13 +5,19 @@ import { Tool } from '../../models/tool';
 
 type ToolState = 'auto' | 'none' | 'required';
 
+interface ChatMessage {
+  internal?: boolean;
+  role: 'user' | 'assistant' | 'tool';
+  content: string;
+}
+
 export function useChatHub(
   system = '',
   model = 'gpt-4-turbo',
   backgroundMessages: CoreMessage[] = [],
   tools: Tool[] = []
 ) {
-  const messages = ref(backgroundMessages);
+  const messages = ref(backgroundMessages as ChatMessage[]);
 
   const toolsToUse = tools.reduce((acc, tool) => {
     acc[`${tool.name}`] = toTool({
@@ -31,11 +37,11 @@ export function useChatHub(
       role: 'user',
       content: userQuestion,
       internal: internal,
-    } as CoreMessage);
+    } as ChatMessage);
     const result = await streamText({
       model: openai(model),
       system: system,
-      messages: messages.value,
+      messages: messages.value as CoreMessage[],
       tools: toolsToUse,
       async onFinish({ text, toolCalls, toolResults, finishReason, usage }) {
         console.log({ text, toolCalls, toolResults, finishReason, usage });

@@ -1,8 +1,6 @@
 <template>
   <div class="chat-container">
-    <q-card
-      class="rounded-borders shadow-0 full-width full-height q-pa-md"
-    >
+    <q-card class="rounded-borders shadow-0 full-width full-height q-pa-md">
       <q-scroll-area
         ref="scrollAreaRef"
         class="messages-box"
@@ -10,17 +8,22 @@
       >
         <div
           class="row full-width"
-          v-for="(entrance, idx) in messages"
+          v-for="(entrance, idx) in visibleMessages"
           :key="`response-${idx}`"
-          :class="entrance.role == 'assistant' ? 'justify-end' : 'justify-start'"
+          :class="
+            entrance.role == 'assistant' ? 'justify-start' : 'justify-end'
+          "
         >
           <q-card
             flat
             class="q-pa-md q-mt-md chat-card"
-            :class="entrance.role == 'assistant' ? 'text-white bg-blue-10' : 'bg-blue-grey-1'"
+            :class="
+              entrance.role == 'assistant'
+                ? 'text-white bg-blue-10'
+                : 'bg-blue-grey-1'
+            "
           >
             <q-markdown
-              :no-highlight="false"
               content-style="background-color: transparent"
               :src="entrance.content"
             />
@@ -36,14 +39,21 @@
         @keypress.enter="onSend"
       >
         <template v-slot:append>
-          <q-btn round size="sm" @click="onSend" :disable="!inputValue" icon="keyboard_double_arrow_up" color="blue-10" />
+          <q-btn
+            round
+            size="sm"
+            @click="onSend"
+            :disable="!inputValue"
+            icon="keyboard_double_arrow_up"
+            color="blue-10"
+          />
         </template>
       </q-input>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useChatHub } from './chat-hub.hook';
 import { CoreMessage } from 'ai';
 import { Tool } from '../../models/tool';
@@ -67,8 +77,12 @@ const { messages, askQuestion } = useChatHub(
   props.tools
 );
 
+const visibleMessages = computed(() => {
+  return messages.value.filter((message) => !message.internal);
+});
+
 function onSend() {
-  if(inputValue.value) {
+  if (inputValue.value) {
     askQuestion(inputValue.value);
     inputValue.value = '';
   }
@@ -94,6 +108,7 @@ function onScrollChange() {
   width: 90%;
   padding-bottom: 0;
   border-radius: 15px;
+  max-width: 70vw;
 }
 
 .messages-box {
@@ -106,12 +121,11 @@ pre {
   background: #212121 !important;
 }
 
-.q-markdown--line-numbers{
+.q-markdown--line-numbers {
   color: white !important;
   background: #212121 !important;
 }
-.q-markdown--line-numbers-wrapper{
+.q-markdown--line-numbers-wrapper {
   background: #212121 !important;
 }
-
 </style>
