@@ -68,6 +68,12 @@ const linksList = [
     icon: 'science',
     link: 'ToolsLab',
   },
+  {
+    title: 'Settings',
+    caption: 'Change your settings',
+    icon: 'settings',
+    link: 'UserSettings',
+  },
 ];
 
 const leftDrawerOpen = ref(false);
