@@ -13,6 +13,7 @@
     "build": "quasar build"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^0.0.35",
     "@ai-sdk/openai": "^0.0.40",
     "@formkit/tempo": "^0.1.2",
     "@quasar/extras": "^1.16.4",
