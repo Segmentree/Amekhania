@@ -6,6 +6,8 @@ import {
   createWebHashHistory,
 } from 'vue-router';
 import routes from './routes';
+import { storeToRefs } from 'pinia';
+import { useUserStore } from 'src/stores/user-store';
 
 /*
  * If not building with SSR mode, you can
@@ -33,9 +35,16 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
 
+  const { apiKey } = storeToRefs(useUserStore());
+
   Router.beforeEach((to, from, next) => {
     if (to.path === '/' && to.name === undefined) next({ name: 'Home' });
-    else next();
+    else if (
+      to.matched.some((record) => record.meta.requireApiKey) &&
+      !apiKey.value
+    ) {
+      next({ name: 'UserSettings' });
+    } else next();
   });
 
   return Router;
