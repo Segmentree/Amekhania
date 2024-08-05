@@ -7,21 +7,35 @@ const routes = [
         path: '/',
         name: 'Home',
         component: () => import('pages/IndexPage.vue'),
+        meta: {
+          requireApiKey: true,
+        },
       },
       {
         path: '/reminders-list',
         name: 'RemindersList',
         component: () => import('pages/RemindersList.vue'),
+        meta: {
+          requireApiKey: true,
+        },
       },
       {
         path: '/notes-list',
         name: 'NotesList',
         component: () => import('pages/NotesList.vue'),
+        meta: {
+          requireApiKey: true,
+        },
       },
       {
         path: '/tools-lab',
         name: 'ToolsLab',
         component: () => import('pages/ToolsLab.vue'),
+      },
+      {
+        path: '/user-settings',
+        name: 'UserSettings',
+        component: () => import('pages/SettingsPage.vue'),
       },
     ],
   },

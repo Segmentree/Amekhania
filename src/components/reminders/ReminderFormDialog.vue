@@ -9,10 +9,16 @@
         <q-btn size="sm" icon="close" flat round dense v-close-popup />
       </q-card-section>
       <q-card-section>
-        <q-input v-model="referenceDate" label="Date" type="date" outlined />
+        <q-input
+          dense
+          v-model="referenceDate"
+          label="Date"
+          type="date"
+          outlined
+        />
       </q-card-section>
       <q-card-section>
-        <q-input v-model="referenceSummary" label="Summary" outlined />
+        <q-input dense v-model="referenceSummary" label="Summary" outlined />
       </q-card-section>
       <q-card-actions align="right">
         <q-btn flat label="Save" color="primary" @click="onSave" />
