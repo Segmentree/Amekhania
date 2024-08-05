@@ -1,11 +1,19 @@
 <template>
   <div>
+    <div class="row justify-center q-mb-lg">
+      <ai-search
+        class="col-12 col-sm-10"
+        :system="filterSystem"
+        :schema="filterSchema"
+        @change="filterKeys = $event"
+      />
+    </div>
     <div class="row justify-center q-gutter-xs">
       <q-card
         class="col-12 col-sm-5 col-md-3"
         flat
         bordered
-        v-for="reminder in listWithKeys"
+        v-for="reminder in remindersList"
         :key="reminder.key"
       >
         <q-card-section class="text-h6">
@@ -55,12 +63,14 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, nextTick } from 'vue';
+import { ref, Ref, nextTick, computed } from 'vue';
 import { useRemindersStore } from 'src/stores/reminders-store';
 import { storeToRefs } from 'pinia';
+import { z } from 'zod';
 import { Reminder } from 'src/models/reminder';
 
 import ReminderFormDialog from '../components/reminders/ReminderFormDialog.vue';
+import AiSearch from '../components/search/AiSearch.vue';
 
 const creating = ref(false);
 const updating = ref(false);
@@ -68,6 +78,33 @@ const reminderModel = ref({} as Reminder & { key: string });
 
 const { add, remove, update } = useRemindersStore();
 const { listWithKeys } = storeToRefs(useRemindersStore());
+
+const stringList = computed(() =>
+  listWithKeys.value
+    .map(
+      (reminder) =>
+        `{ date: ${reminder.date}, summary: ${reminder.summary}, key: ${reminder.key} }`
+    )
+    .join(',')
+);
+
+const filterSystem = computed(
+  () =>
+    `Do all the filters over this list of reminders: [${stringList.value}] following the user search query.`
+);
+const filterKeys: Ref<string[]> = ref([]);
+const filterSchema = z.object({
+  result: z
+    .array(z.string().describe('the key of the reminder'))
+    .describe('The resulting array of the search'),
+});
+
+const remindersList = computed(() => {
+  if (!filterKeys.value || !filterKeys.value.length) return listWithKeys.value;
+  return listWithKeys.value.filter((note) =>
+    filterKeys.value.includes(note.key)
+  );
+});
 
 function onStartUpdate(reminder: Reminder & { key: string }) {
   reminderModel.value = reminder;
