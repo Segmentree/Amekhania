@@ -1,11 +1,19 @@
 <template>
   <div>
+    <div class="row justify-center q-mb-lg">
+      <ai-search
+        class="col-12 col-sm-10"
+        :system="filterSystem"
+        :schema="filterSchema"
+        @change="filterKeys = $event"
+      />
+    </div>
     <div class="row justify-center q-gutter-xs">
       <q-card
         class="col-sm-6 col-md-3"
         flat
         bordered
-        v-for="note in listWithKeys"
+        v-for="note in notesList"
         :key="note.key"
       >
         <q-card-section class="text-h6">
@@ -70,12 +78,13 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, nextTick } from 'vue';
+import { ref, Ref, nextTick, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { Note } from 'src/models/note';
 import { useNotesStore } from 'src/stores/notes-store';
-
+import { z } from 'zod';
 import NoteFormDialog from 'src/components/notes/NoteFormDialog.vue';
+import AiSearch from '../components/search/AiSearch.vue';
 
 const creating = ref(false);
 const updating = ref(false);
@@ -83,6 +92,33 @@ const noteModel = ref({} as Note & { key: string });
 
 const { add, remove, update } = useNotesStore();
 const { listWithKeys } = storeToRefs(useNotesStore());
+
+const stringList = computed(() =>
+  listWithKeys.value
+    .map(
+      (note) =>
+        `{ title: ${note.title}, summary: ${note.summary}, date: ${note.date}, tags: ${note.tags}, key: ${note.key} }`
+    )
+    .join(',')
+);
+
+const filterSystem = computed(
+  () =>
+    `Do all the filters over this list of notes: [${stringList.value}] following the user search query.`
+);
+const filterKeys: Ref<string[]> = ref([]);
+const filterSchema = z.object({
+  result: z
+    .array(z.string().describe('the key of the note'))
+    .describe('The resulting array of the search'),
+});
+
+const notesList = computed(() => {
+  if (!filterKeys.value || !filterKeys.value.length) return listWithKeys.value;
+  return listWithKeys.value.filter((note) =>
+    filterKeys.value.includes(note.key)
+  );
+});
 
 function onStartUpdate(note: Note & { key: string }) {
   noteModel.value = { ...note };
