@@ -1,7 +1,8 @@
 import { ref } from 'vue';
 import { openai } from '@ai-sdk/openai';
-import { streamText, CoreMessage, tool as toTool } from 'ai';
+import { streamText, CoreMessage } from 'ai';
 import { Tool } from '../../models/tool';
+import { getModelTools } from '../../tools/helpers';
 
 type ToolState = 'auto' | 'none' | 'required';
 
@@ -13,20 +14,11 @@ interface ChatMessage {
 
 export function useChatHub(
   system = '',
-  model = 'gpt-4-turbo',
+  model = 'gpt-4o',
   backgroundMessages: CoreMessage[] = [],
   tools: Tool[] = []
 ) {
   const messages = ref(backgroundMessages as ChatMessage[]);
-
-  const toolsToUse = tools.reduce((acc, tool) => {
-    acc[`${tool.name}`] = toTool({
-      description: tool.description,
-      parameters: tool.parameters,
-      execute: async (args) => tool.execute && tool.execute(args),
-    });
-    return acc;
-  }, {} as { [key: string]: any });
 
   async function askQuestion(
     userQuestion: string,
@@ -42,7 +34,7 @@ export function useChatHub(
       model: openai(model),
       system: system,
       messages: messages.value as CoreMessage[],
-      tools: toolsToUse,
+      tools: getModelTools(tools),
       async onFinish({ text, toolCalls, toolResults, finishReason, usage }) {
         console.log({ text, toolCalls, toolResults, finishReason, usage });
         if (toolResults)
