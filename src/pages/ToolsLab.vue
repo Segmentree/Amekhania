@@ -125,18 +125,20 @@
     <q-card class="q-mt-sm" flat bordered>
       <q-card-section class="text-h6"> Result: </q-card-section>
       <q-card-section>
-        {{ functionResult }}
+        <q-markdown :src="toMarkdownCode(functionResult)" />
       </q-card-section>
     </q-card>
   </div>
 </template>
 <script setup lang="ts">
-import { ref, Ref, onMounted, watch, nextTick } from 'vue';
+import { ref, Ref, onMounted, watch, nextTick, onBeforeUnmount } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useToolsLab } from './tools-lab.hook';
 import { useToolsStore } from 'src/stores/tools-store';
 import { Notify } from 'quasar';
 import ToolCard from 'src/components/tools/ToolCard.vue';
+
+const emit = defineEmits(['change-right-drawer', 'close-right-drawer']);
 
 const mountDrawerList = ref(false);
 const editorActive = ref(true);
@@ -242,9 +244,18 @@ function onReset() {
   editingTool.value = undefined;
 }
 
+function toMarkdownCode(str: string) {
+  return `\`\`\`code\n${str}\n\`\`\``;
+}
+
 onMounted(() => {
   initEditor();
   mountDrawerList.value = true;
+});
+
+onBeforeUnmount(() => {
+  mountDrawerList.value = false;
+  emit('close-right-drawer');
 });
 
 watch(functionName, async () => {
