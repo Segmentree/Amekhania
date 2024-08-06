@@ -94,7 +94,6 @@ async function getGif(search) {
       return reponse.json();
     })
     .then((response) => {
-      console.log(response.data[0].url);
       return `Show the user the following gif: ${response.data[0].url}`;
     });
 }

@@ -33,6 +33,7 @@
       <q-page class="q-py-md q-px-xl">
         <router-view
           @change-right-drawer="rightDrawerOpen = !rightDrawerOpen"
+          @close-right-drawer="rightDrawerOpen = false"
         />
       </q-page>
     </q-page-container>
@@ -65,12 +66,6 @@ const linksList = [
     caption: 'Check your notes',
     icon: 'edit_note',
     link: 'NotesList',
-  },
-  {
-    title: 'Tools',
-    caption: 'Check your tools',
-    icon: 'build',
-    link: 'ToolsList',
   },
   {
     title: 'Tools Lab',
