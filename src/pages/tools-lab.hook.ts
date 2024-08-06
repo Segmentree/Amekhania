@@ -4,9 +4,9 @@ import * as monaco from 'monaco-editor';
 import { constrainedEditor } from 'constrained-editor-plugin';
 import { CustomParameter, CustomTool } from '../models/tool';
 import { useToolsStore } from '../stores/tools-store';
+import { projectContext } from 'src/tools/helpers';
 
 export function useToolsLab() {
-  const restrictions = ref([] as any[]);
   const functionName = ref('myCustomToolMethod');
   const functionDescription = ref('');
   const toolMethodBody = ref('\t// Enter the content for the function here');
@@ -26,13 +26,14 @@ export function useToolsLab() {
   }
 
   function execute() {
+    const ctx = projectContext();
     try {
       const argsNames = parameters.value.map((param) => param.name) as string[];
       const argsValues = parameters.value.map(
         (param) => param.value
       ) as string[];
-      const fn = new Function(...argsNames, toolMethodBody.value);
-      return fn.call(null, ...argsValues);
+      const fn = new Function(...argsNames, toolMethodBody.value).bind(ctx);
+      return fn.call(ctx, ...argsValues);
     } catch (e) {
       console.error(e);
     }
@@ -40,9 +41,11 @@ export function useToolsLab() {
 
   function initEditor() {
     const javascriptEditorContainer = document.getElementById('javascript');
+    const restrictions = ref([] as any[]);
     try {
       const currentCode = toolMethodWrapper(toolMethodBody.value);
       const lastLine = currentCode.split('\n').length;
+
       if (javascriptEditorContainer) {
         const javascriptEditor = monaco.editor.create(
           javascriptEditorContainer,
@@ -97,10 +100,19 @@ export function useToolsLab() {
     AddTool(newTool);
   }
 
+  function reset() {
+    functionDescription.value = '';
+    toolMethodBody.value = '\t// Enter the content for the function here';
+    parameters.value = [];
+    functionName.value = 'myCustomToolMethod';
+  }
+
   return {
     functionName,
     functionDescription,
     parameters,
+    toolMethodBody,
+    reset,
     saveTool,
     initEditor,
     execute,
