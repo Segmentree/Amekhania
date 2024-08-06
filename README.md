@@ -1,4 +1,4 @@
-![Logo](https://github.com/Segmentree/Amekhania/blob/feature/readme/public/LogoLight.png?raw=true)
+![Logo](https://github.com/Segmentree/Amekhania/blob/main/public/LogoLight.png?raw=true)
 
 An AI planner, for programmers 😎
 
@@ -43,7 +43,7 @@ And Add a reminder to buy the groceries later
 After you have created so many Notes that you have no idea how to find the one you want
 You can also use AI to filter through them
 
-![AI Search](https://github.com/Segmentree/Amekhania/blob/feature/readme/public/searchGif.gif?raw=true)
+![AI Search](https://github.com/Segmentree/Amekhania/blob/main/public/searchGif.gif?raw=true)
 
 ### Reminders
 
@@ -53,7 +53,7 @@ You could have Amekhania create the perfect schedule for your vacations and then
 
 You Reminders will be Listed on The Reminders Tab:
 
-![Reminders](https://github.com/Segmentree/Amekhania/blob/feature/readme/public/reminders.png?raw=true)
+![Reminders](https://github.com/Segmentree/Amekhania/blob/main/public/reminders.png?raw=true)
 
 ## Tools Lab
 
@@ -101,11 +101,11 @@ async function getGif(search) {
 
 The result would be something like this:
 
-![GIF](https://github.com/Segmentree/Amekhania/blob/feature/readme/public/gifTool.png?raw=true)
+![GIF](https://github.com/Segmentree/Amekhania/blob/main/public/gifTool.png?raw=true)
 
 You just need to save your new Tool now and you are ready to get GIFs in your chat
 
-![GIF Celebration](https://github.com/Segmentree/Amekhania/blob/feature/readme/public/celebration.gif?raw=true)
+![GIF Celebration](https://github.com/Segmentree/Amekhania/blob/main/public/celebration.gif?raw=true)
 
 ### Privacy
 
