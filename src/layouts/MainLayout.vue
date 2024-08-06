@@ -50,7 +50,7 @@ defineOptions({
 const linksList = [
   {
     title: 'Assistant',
-    caption: 'Place for think and planning',
+    caption: 'Place to think and plan',
     icon: 'smart_toy',
     link: 'Home',
   },
