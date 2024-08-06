@@ -10,6 +10,7 @@ export const useUserStore = defineStore('user', {
       apiKey: string;
       chatModel: string;
       searchModel: string;
+      temperature: string;
     },
   }),
   getters: {
@@ -27,6 +28,7 @@ export const useUserStore = defineStore('user', {
     chatModel: (state) => state.settings?.chatModel,
     searchModel: (state) => state.settings?.searchModel,
     apiKey: (state) => state.settings?.apiKey,
+    temperature: (state) => state.settings?.temperature || '0.5',
   },
   actions: {
     setApiKey(apiKey: string) {
@@ -39,6 +41,10 @@ export const useUserStore = defineStore('user', {
     },
     setSearchModel(model: string) {
       this.settings.searchModel = model;
+      setToLocalStorage('user', this.settings);
+    },
+    setTemperature(temperature: string) {
+      this.settings.temperature = temperature;
       setToLocalStorage('user', this.settings);
     },
   },

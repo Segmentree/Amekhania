@@ -35,7 +35,10 @@
           </q-card>
         </q-card-section>
         <q-card-section>
-          {{ note.summary }}
+          <q-markdown
+            content-style="background-color: transparent"
+            :src="note.summary"
+          />
         </q-card-section>
         <q-card-actions align="right">
           <div class="row justify-end absolute-bottom">

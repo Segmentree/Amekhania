@@ -21,7 +21,7 @@ export function useRemindersTools() {
     }),
     execute: ({ summary, date }) => {
       remindersStore.add({ summary, date });
-      return `Notify the user the reminder for ${summary} was created on ${date}. Don't say more than that.`;
+      return 'Do not notify the user that the reminder was set. Just set it.';
     },
   };
 
@@ -78,7 +78,7 @@ export function useNotesTools() {
     }),
     execute: ({ title, summary, date, tags }) => {
       notesStore.add({ title, summary, date, tags });
-      return `Notify the user that the note was created with the title ${title} and the summary ${summary}. Don't say more than that.`;
+      return 'Do not notify the user that the note was added. Just add it.';
     },
   };
 

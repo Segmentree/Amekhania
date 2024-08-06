@@ -19,13 +19,14 @@ function toUsableTool(tool: CustomTool): Tool {
         return acc;
       }, {} as { [key: string]: z.ZodString })
     ),
-    execute: (args) => {
+    execute: async (args) => {
       const argsNames = tool.parameters.map((param) => param.name) as string[];
       const argsValues = tool.parameters.map(
         (param) => args[param.name]
       ) as string[];
       const fn = new Function(...argsNames, tool.body).bind(ctx);
-      return fn.call(ctx, ...argsValues);
+      const result = await fn.call(ctx, ...argsValues);
+      return result;
     },
   };
 }

@@ -181,8 +181,8 @@ async function onRemoveParameter(index: number) {
   initEditor();
 }
 
-function onExecute() {
-  functionResult.value = execute();
+async function onExecute() {
+  functionResult.value = await execute();
 }
 
 function onEdit(key: string) {

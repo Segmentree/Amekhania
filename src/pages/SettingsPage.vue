@@ -12,7 +12,7 @@
           v-model="apiKeyReference"
           dense
           outlined
-          placeholder="type your OpenAI api key"
+          placeholder="Input your OpenAI api key"
           type="password"
         />
       </q-card-section>
@@ -24,7 +24,7 @@
           v-model="chatModelRef"
           dense
           outlined
-          placeholder="type what model you want to use for the chat assistant (default: openai:gpt-4o)"
+          placeholder="Input what model you want to use for the chat assistant (default: openai:gpt-4o)"
         />
       </q-card-section>
       <q-card-section class="q-px-none">
@@ -35,7 +35,21 @@
           v-model="searchModelRef"
           dense
           outlined
-          placeholder="type what model you want to use for the search assistant (default: openai:gpt-4o)"
+          placeholder="Input what model you want to use for the search assistant (default: openai:gpt-4o)"
+        />
+      </q-card-section>
+      <q-card-section class="q-px-none">
+        <div class="text-weight-bold text-capitalize q-py-xs">
+          Model Temperature
+        </div>
+        <q-input
+          v-model.number="temperatureRef"
+          step="0.1"
+          type="number"
+          dense
+          outlined
+          placeholder="Type in what temperature setting would you prefer (default: 0.5)"
+          hint="0 means almost deterministic results, and higher values mean more randomness."
         />
       </q-card-section>
       <q-card-actions class="row justify-end q-px-none">
@@ -53,13 +67,16 @@ const {
   chatModel,
   searchModel,
   apiKey,
+  temperature,
   setApiKey,
   setChatModel,
   setSearchModel,
+  setTemperature,
 } = useUserStore();
 const chatModelRef = ref(chatModel);
 const searchModelRef = ref(searchModel);
 const apiKeyReference = ref('');
+const temperatureRef = ref(temperature);
 
 if (!apiKey) {
   Notify.create({
@@ -72,21 +89,13 @@ if (!apiKey) {
 function onSave() {
   if (apiKeyReference.value) {
     setApiKey(apiKeyReference.value);
-    Notify.create({
-      message: 'Your api key has been saved successfully',
-      color: 'positive',
-    });
   }
-
   setChatModel(chatModelRef.value);
-  Notify.create({
-    message: 'Your chat model has been saved successfully',
-    color: 'positive',
-  });
-
   setSearchModel(searchModelRef.value);
+  setTemperature(temperatureRef.value);
   Notify.create({
-    message: 'Your search model has been saved successfully',
+    message:
+      'Your settings have been saved successfully. Refresh the page to apply the changes.',
     color: 'positive',
   });
 }
