@@ -43,6 +43,8 @@ And Add a reminder to buy the groceries later
 After you have created so many Notes that you have no idea how to find the one you want
 You can also use AI to filter through them
 
+You can also ask Amekhania to show them in the chat
+
 ![AI Search](https://github.com/Segmentree/Amekhania/blob/main/public/searchGif.gif?raw=true)
 
 ### Reminders
@@ -54,6 +56,8 @@ You could have Amekhania create the perfect schedule for your vacations and then
 You Reminders will be Listed on The Reminders Tab:
 
 ![Reminders](https://github.com/Segmentree/Amekhania/blob/main/public/reminders.png?raw=true)
+
+But Amekhania can also show them to you
 
 ## Tools Lab
 

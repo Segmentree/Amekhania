@@ -81,7 +81,7 @@ if (!messages.value.length)
     `
               With a little bit of creativity, greet the user and provide a short explanation of what they can do in the app
               They can discuss, make plans and brainstorn with you and then
-              set reminders, save messages as notes and build their own ai tools`,
+              set reminders, save messages as notes, list their notes and reminders, and build their own ai tools`,
     'auto',
     true
   );
