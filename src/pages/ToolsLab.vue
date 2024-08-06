@@ -1,5 +1,31 @@
 <template>
   <div>
+    <Teleport v-if="mountDrawerList" to="#right-drawer-content">
+      <tool-card
+        class="q-mb-xs"
+        v-for="(tool, i) in listWithCode"
+        @edit="onEdit"
+        @remove="onRemove"
+        :key="`tool-${i}`"
+        :tool="tool"
+      />
+    </Teleport>
+    <div class="row justify-end">
+      <q-btn
+        class="q-mb-xs q-mx-xs"
+        unelevated
+        color="secondary"
+        label="Reset"
+        @click="onReset"
+      />
+      <q-btn
+        class="q-mb-xs"
+        unelevated
+        color="primary"
+        label="Tools list"
+        @click="$emit('change-right-drawer')"
+      />
+    </div>
     <div class="q-mb-xs">
       <q-input dense outlined v-model="functionName" />
     </div>
@@ -80,8 +106,20 @@
         outlined
         :placeholder="param.name"
       />
+      <q-btn
+        v-if="editingTool"
+        unelevated
+        color="secondary"
+        label="Update"
+        @click="onUpdate"
+      />
+      <q-btn
+        unelevated
+        color="secondary"
+        :label="editingTool ? 'Save as New' : 'Save'"
+        @click="onSave"
+      />
       <q-btn unelevated color="primary" label="Run" @click="onExecute" />
-      <q-btn unelevated color="secondary" label="Save" @click="onSave" />
     </div>
 
     <q-card class="q-mt-sm" flat bordered>
@@ -93,14 +131,24 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick } from 'vue';
+import { ref, Ref, onMounted, watch, nextTick } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useToolsLab } from './tools-lab.hook';
+import { useToolsStore } from 'src/stores/tools-store';
+import { Notify } from 'quasar';
+import ToolCard from 'src/components/tools/ToolCard.vue';
 
+const mountDrawerList = ref(false);
 const editorActive = ref(true);
+const { remove, update } = useToolsStore();
+const { listWithCode, entry } = storeToRefs(useToolsStore());
+
 const {
   functionName,
   functionDescription,
   parameters,
+  toolMethodBody,
+  reset,
   saveTool,
   initEditor,
   execute,
@@ -110,6 +158,7 @@ const {
 const newParameterName = ref('');
 const newParameterDescription = ref('');
 const functionResult = ref('');
+const editingTool: Ref<string | undefined> = ref();
 
 async function onRestartEditor() {
   editorActive.value = false;
@@ -136,14 +185,66 @@ function onExecute() {
   functionResult.value = execute();
 }
 
+function onEdit(key: string) {
+  const tool = entry.value(key);
+  functionName.value = tool.name;
+  functionDescription.value = tool.description;
+  toolMethodBody.value = tool.body;
+  parameters.value = tool.parameters;
+  editingTool.value = key;
+}
+
+function onRemove(key: string) {
+  remove(key);
+  Notify.create({
+    message: 'Tool removed',
+    color: 'positive',
+  });
+}
+
 function onSave() {
   if (functionName.value && functionDescription.value) {
     saveTool();
+    Notify.create({
+      message: 'Tool saved',
+      color: 'positive',
+    });
+  } else {
+    Notify.create({
+      message: 'Name and description are required',
+      color: 'negative',
+    });
   }
+}
+
+function onUpdate() {
+  if (functionName.value && functionDescription.value) {
+    update(editingTool.value as string, {
+      name: functionName.value,
+      description: functionDescription.value,
+      body: toolMethodBody.value,
+      parameters: parameters.value,
+    });
+    Notify.create({
+      message: 'Tool updated',
+      color: 'positive',
+    });
+  } else {
+    Notify.create({
+      message: 'Name and description are required',
+      color: 'negative',
+    });
+  }
+}
+
+function onReset() {
+  reset();
+  editingTool.value = undefined;
 }
 
 onMounted(() => {
   initEditor();
+  mountDrawerList.value = true;
 });
 
 watch(functionName, async () => {
