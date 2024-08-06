@@ -1,10 +1,12 @@
-import { ref } from 'vue';
 import { streamText, CoreMessage } from 'ai';
 import { Tool } from 'src/models/tool';
 import { getModelTools } from 'src/tools/helpers';
 import { useUserStore } from 'src/stores/user-store';
 import { Notify } from 'quasar';
 import { useRouter } from 'vue-router';
+import { useChatStore } from 'src/stores/chat-store';
+import { ref } from 'vue';
+import { Ref } from 'vue';
 
 type ToolState = 'auto' | 'none' | 'required';
 
@@ -14,14 +16,10 @@ interface ChatMessage {
   content: string;
 }
 
-export function useChatHub(
-  system = '',
-  model?: string,
-  backgroundMessages: CoreMessage[] = [],
-  tools: Tool[] = []
-) {
-  const messages = ref(backgroundMessages as ChatMessage[]);
-  const { registry, chatModel } = useUserStore();
+export function useChatHub(system = '', model?: string, tools: Tool[] = []) {
+  const chatStore = useChatStore();
+  const messages = ref(chatStore.messages) as Ref<ChatMessage[]>;
+  const { registry, chatModel, temperature } = useUserStore();
   const router = useRouter();
 
   async function askQuestion(
@@ -40,6 +38,7 @@ export function useChatHub(
         model: registry.languageModel(model || chatModel || 'openai:gpt-4o'),
         system: system,
         messages: messages.value as CoreMessage[],
+        temperature: Number(temperature),
         tools: getModelTools(tools),
         async onFinish({ text, toolCalls, toolResults, finishReason, usage }) {
           console.log({ text, toolCalls, toolResults, finishReason, usage });
