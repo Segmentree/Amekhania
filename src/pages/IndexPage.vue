@@ -1,11 +1,12 @@
 <template>
-  <chat-hub :tools="tools" />
+  <chat-hub :tools="tools" :system="systemDefinition" />
 </template>
 
 <script setup>
 import ChatHub from 'src/components/chat/ChatHub.vue';
 import { useRemindersTools, useNotesTools } from '../tools/chat-functions';
 import { useToolsStore } from '../stores/tools-store';
+import { systemDefinition } from './index-page.hook';
 
 const { list: customToolsList } = useToolsStore();
 
