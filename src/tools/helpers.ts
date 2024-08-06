@@ -1,6 +1,8 @@
 import sha256 from 'crypto-js/sha256';
 import { Tool } from '../models/tool';
 import { tool as toTool } from 'ai';
+import { useNotesStore } from 'src/stores/notes-store';
+import { useRemindersStore } from 'src/stores/reminders-store';
 
 export function proxyUnwrap(obj: any) {
   return JSON.parse(JSON.stringify(obj));
@@ -34,4 +36,30 @@ export function getModelTools(tools: Tool[]) {
     });
     return acc;
   }, {} as { [key: string]: any });
+}
+
+export function projectContext() {
+  const {
+    listWithKeys: remindersList,
+    add: addReminder,
+    remove: removeReminder,
+    update: updateReminder,
+  } = useRemindersStore();
+  const {
+    listWithKeys: notesList,
+    add: addNote,
+    remove: removeNote,
+    update: updateNote,
+  } = useNotesStore();
+
+  return {
+    remindersList,
+    notesList,
+    addReminder,
+    removeReminder,
+    updateReminder,
+    addNote,
+    removeNote,
+    updateNote,
+  };
 }
