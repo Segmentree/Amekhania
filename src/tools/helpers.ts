@@ -23,7 +23,10 @@ export function getFromLocalStorage<T>(key: string) {
   }
 }
 
-export function setToLocalStorage<T>(key: string, value: { [key: string]: T }) {
+export function setToLocalStorage<T>(
+  key: string,
+  value: { [key: string]: T } | Array<T>
+) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
