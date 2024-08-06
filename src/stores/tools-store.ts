@@ -3,11 +3,13 @@ import {
   createHash,
   getFromLocalStorage,
   setToLocalStorage,
+  projectContext,
 } from '../tools/helpers';
 import { Tool, CustomTool } from '../models/tool';
 import { z } from 'zod';
 
 function toUsableTool(tool: CustomTool): Tool {
+  const ctx = projectContext();
   return {
     name: tool.name,
     description: tool.description,
@@ -22,8 +24,8 @@ function toUsableTool(tool: CustomTool): Tool {
       const argsValues = tool.parameters.map(
         (param) => args[param.name]
       ) as string[];
-      const fn = new Function(...argsNames, tool.body);
-      return fn.call(null, ...argsValues);
+      const fn = new Function(...argsNames, tool.body).bind(ctx);
+      return fn.call(ctx, ...argsValues);
     },
   };
 }
@@ -34,7 +36,9 @@ export const useToolsStore = defineStore('tools', {
   }),
   getters: {
     list: (state) => Object.values(state.tools).map(toUsableTool),
-    entry: (state) => (key: string) => toUsableTool(state.tools[key]),
+    listWithCode: (state) =>
+      Object.keys(state.tools).map((key) => ({ key, ...state.tools[key] })),
+    entry: (state) => (key: string) => state.tools[key],
     byName: (state) => (name: string) => {
       const tool = Object.values(state.tools).find(
         (tool) => tool.name === name
@@ -44,12 +48,17 @@ export const useToolsStore = defineStore('tools', {
   },
   actions: {
     add(tool: CustomTool) {
-      const key = createHash(tool.name);
+      const date = new Date().toISOString().toString();
+      const key = createHash(tool.name + date);
       this.tools[key] = tool;
       setToLocalStorage('tools', this.tools);
     },
     remove(key: string) {
       delete this.tools[key];
+      setToLocalStorage('tools', this.tools);
+    },
+    update(key: string, tool: CustomTool) {
+      this.tools[key] = tool;
       setToLocalStorage('tools', this.tools);
     },
   },
