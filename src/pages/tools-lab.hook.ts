@@ -22,10 +22,12 @@ export function useToolsLab() {
   }
 
   function toolMethodWrapper(body: string) {
-    return `function ${functionName.value}(${useParameters()}){\n${body}\n}`;
+    return `async function ${
+      functionName.value
+    }(${useParameters()}){\n${body}\n}`;
   }
 
-  function execute() {
+  async function execute() {
     const ctx = projectContext();
     try {
       const argsNames = parameters.value.map((param) => param.name) as string[];
@@ -33,7 +35,8 @@ export function useToolsLab() {
         (param) => param.value
       ) as string[];
       const fn = new Function(...argsNames, toolMethodBody.value).bind(ctx);
-      return fn.call(ctx, ...argsValues);
+      const result = await fn.call(ctx, ...argsValues);
+      return result;
     } catch (e) {
       console.error(e);
     }

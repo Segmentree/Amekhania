@@ -1,6 +1,6 @@
 ![Logo](https://github.com/Segmentree/Amekhania/blob/feature/readme/public/LogoLight.png?raw=true)
 
-An AI planner, for programmers
+An AI planner, for programmers 😎
 
 ## Running the project
 
@@ -47,9 +47,9 @@ You can also use AI to filter through them
 
 ### Reminders
 
-After agreeing with chatgpt on a plan, a date, a specific action that they recommend you to do, wouldn't it be great if he could create a reminder for you?
+After agreeing with Amekhania on a plan, a date, a specific action that they recommend you to do, wouldn't it be great if he could create a reminder for you?
 
-You could have chatgpt create the perfect schedule for your vacations and then save all necessary reminders, like buying the plan tickets, preparing for your trip, making restaurant reservations.....
+You could have Amekhania create the perfect schedule for your vacations and then save all necessary reminders, like buying the plan tickets, preparing for your trip, making restaurant reservations.....
 
 You Reminders will be Listed on The Reminders Tab:
 
@@ -62,16 +62,55 @@ You get to code your own tools!
 
 This can be your playground to build any tool you might think would be useful to you
 
-Do you want access to the weather in different cities so that the ai can take into account to plan your day accordingly?
-You can easily build a tool to connect to a public weather api
+This are some examples:
 
-Do you want amekhania yo send a message to someone with their generated text?
-You just have to connect to a chat service in a very simple tool
+- Do you want access to the weather in different cities so that Amekhania can take into account to plan your day accordingly?
+  You can easily build a tool to connect to a public weather api
 
-Would you like to write down your emails with the help of amekhania and then sending them right from the chat?
-You can build a tool for that
+- Do you want amekhania to send a message to someone with their generated text?
+  You just have to connect to a chat service in a very simple tool
 
-As a plus, this is all saved on your browser's storage, so you would not be sending your code, or your credentials to any external server
+- Would you like to write down your emails with the help of amekhania and then sending them right from the chat?
+  Just add an integration with Gmail
+
+### How does it work?
+
+First you need to pick a name for your Tool
+Let use for example: `getGif`
+We are going to build a tool that allows Amekhania the ability to send gifs the user would like to find
+
+So the Scenario would be: `When the user wants to find a gif or you think a gif is an appropriate response`
+
+We need a `search` parameter to describe the desired gif
+
+In the Tools Lab tab you will a code editor very similar to vscode, including syntax highlighting and autocompletion
+here you can input the following code:
+
+```js
+async function getGif(search) {
+  url = `https://api.giphy.com/v1/gifs/search?api_key=v2KR11XqwZV2t9V7klgFEKcs0mhBQOvJ&q=${search}&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips`;
+  return fetch(url)
+    .then((reponse) => {
+      return reponse.json();
+    })
+    .then((response) => {
+      console.log(response.data[0].url);
+      return `Show the user the following gif: ${response.data[0].url}`;
+    });
+}
+```
+
+The result would be something like this:
+
+![GIF](https://github.com/Segmentree/Amekhania/blob/feature/readme/public/gifTool.png?raw=true)
+
+You just need to save your new Tool now and you are ready to get GIFs in your chat
+
+![GIF Celebration](https://github.com/Segmentree/Amekhania/blob/feature/readme/public/celebration.gif?raw=true)
+
+### Privacy
+
+Everything is saved on your browser's storage, so you would not be sending your code, or your credentials to any external server
 
 ## Coming Soon
 
