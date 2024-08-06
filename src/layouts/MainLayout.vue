@@ -27,9 +27,15 @@
       />
     </q-drawer>
 
+    <q-drawer bordered class="q-pa-xs" side="right" v-model="rightDrawerOpen">
+      <div id="right-drawer-content" />
+    </q-drawer>
+
     <q-page-container>
-      <q-page class="q-pa-md">
-        <router-view />
+      <q-page class="q-py-md q-px-xl">
+        <router-view
+          @change-right-drawer="rightDrawerOpen = !rightDrawerOpen"
+        />
       </q-page>
     </q-page-container>
   </q-layout>
@@ -63,6 +69,12 @@ const linksList = [
     link: 'NotesList',
   },
   {
+    title: 'Tools',
+    caption: 'Check your tools',
+    icon: 'build',
+    link: 'ToolsList',
+  },
+  {
     title: 'Tools Lab',
     caption: 'Create your own tools',
     icon: 'science',
@@ -77,6 +89,7 @@ const linksList = [
 ];
 
 const leftDrawerOpen = ref(false);
+const rightDrawerOpen = ref(false);
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
