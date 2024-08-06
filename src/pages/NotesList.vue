@@ -10,7 +10,7 @@
     </div>
     <div class="row justify-center q-gutter-xs">
       <q-card
-        class="col-sm-6 col-md-3"
+        class="col-12 col-sm-5"
         flat
         bordered
         v-for="note in notesList"
