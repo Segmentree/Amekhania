@@ -31,7 +31,7 @@ When having a chat with any of the recent AI models, there are normally a couple
 
 ### Notes
 
-Weather you are getting ideas for your next project, planning a trip or clearing up ab obscure topic with the help of AI, you do not want to go through the whole conversation to get to it's useful information
+Weather you are getting ideas for your next project, planning a trip or clearing up an obscure topic with the help of AI, you do not want to go through the whole conversation to get to it's useful information
 
 That is why at any point in your talks with Amekhania you can ask her to save a note, albeit one that you provide, or one of her precious messages. She will also create any relevant tags for your note
 
